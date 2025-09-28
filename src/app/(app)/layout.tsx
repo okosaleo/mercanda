@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import localFont from 'next/font/local'
 import "./globals.css";
+import { TRPCReactProvider } from "@/trpc/client";
 
 const Nohemi = localFont({
   src: [
@@ -44,7 +45,9 @@ export default function RootLayout({
       <body
         className={`${Nohemi.className} antialiased`}
       >
+        <TRPCReactProvider>
         {children}
+        </TRPCReactProvider>
       </body>
     </html>
   );

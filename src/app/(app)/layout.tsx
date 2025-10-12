@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import localFont from 'next/font/local'
 import "./globals.css";
 import { TRPCReactProvider } from "@/trpc/client";
+import { Toaster } from "@/components/ui/sonner";
 
 const Nohemi = localFont({
   src: [
@@ -47,6 +48,7 @@ export default function RootLayout({
       >
         <TRPCReactProvider>
         {children}
+        <Toaster position="top-center" />
         </TRPCReactProvider>
       </body>
     </html>

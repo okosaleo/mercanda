@@ -6,6 +6,8 @@ import { usePathname } from 'next/navigation'
 import React, { useState } from 'react'
 import NavbarSideBar from './navnbae-sidebar'
 import { MenuIcon } from 'lucide-react'
+import { useTRPC } from '@/trpc/client'
+import { useQuery } from '@tanstack/react-query'
 
 interface NavbarProps {
     href: string;
@@ -38,6 +40,9 @@ const navbarItems = [
 export default function Navbar() {
     const pathname = usePathname();
     const [isSidebarOpen, setIsSidebarOpen] = useState(false)
+
+    const trpc = useTRPC();
+    const session = useQuery(trpc.auth.session.queryOptions())
   return (
     <div className='h-20 flex border-b justify-between font-medium'>
        <Link href="/" className='pl-6 flex items-center' >
@@ -61,15 +66,24 @@ export default function Navbar() {
             </NavbarItem>
          ))}
        </div>
-       <div className='hidden lg:flex'>
-        <Link href="sign-in" className='border-l border-t-0 border-b-0 border-r bg-main hover:bg-main/20 p-10 h-full flex items-center justify-center rounded-none transition-colors text-lg '>
+       {session.data?.user ? (
+        <div className='hidden lg:flex'>
+             <Link href="/admin" className='border-l border-t-0 border-b-0 border-r border-black bg-black text-white hover:bg-main/20 hover:text-black p-6 h-full rounded-none transition-colors text-lg '>
+            Dashboard
+        </Link>
+        </div>
+        ) :(
+            <div className='hidden lg:flex'>
+        <Link prefetch href="/sign-in" className='border-l border-t-0 border-b-0 border-r bg-main hover:bg-main/20 p-10 h-full flex items-center justify-center rounded-none transition-colors text-lg '>
             Log in
         </Link>
-        <Link href="sign-up" className='border-l border-t-0 border-b-0 border-r border-black bg-black text-white hover:bg-main/20 hover:text-black p-6 h-full rounded-none transition-colors text-lg '>
+        <Link prefetch href="/sign-up" className='border-l border-t-0 border-b-0 border-r border-black bg-black text-white hover:bg-main/20 hover:text-black p-6 h-full rounded-none transition-colors text-lg '>
             Start selling
         </Link>
        </div>
 
+         )}
+       
        <div className='flex lg:hidden items-center justify-center p-4'>
         <Button className='' onClick={() => setIsSidebarOpen(true)}>
             <MenuIcon />

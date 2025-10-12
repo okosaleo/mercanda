@@ -1,11 +1,11 @@
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
-import { CustomCategory } from "../types";
 import { useState } from "react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { useTRPC } from "@/trpc/client";
+import { CategoriesGetManyOutput } from "@/modules/categories/types";
 
 interface Props {
     open: boolean;
@@ -16,8 +16,8 @@ export default function CategoriesSidebar({open, onOpenChange }: Props) {
     const trpc = useTRPC();
       const {data} = useSuspenseQuery(trpc.categories.getMany.queryOptions())
     const router = useRouter()
-    const [parentCategories, setParentCategories] = useState<CustomCategory[] | null>(null)
-    const [selectedCategory, setSelectedCategories] = useState<CustomCategory | null>(null)
+    const [parentCategories, setParentCategories] = useState<CategoriesGetManyOutput | null>(null)
+    const [selectedCategory, setSelectedCategories] = useState<CategoriesGetManyOutput[1] | null>(null)
 
     const currentCategories = parentCategories ?? data ?? [];
 
@@ -27,9 +27,9 @@ export default function CategoriesSidebar({open, onOpenChange }: Props) {
         onOpenChange(open)
     }
 
-    const handleCategoryClick = (category: CustomCategory) => {
+    const handleCategoryClick = (category: CategoriesGetManyOutput[1]) => {
         if (category.subcategories && category.subcategories.length > 0) {
-            setParentCategories(category.subcategories as CustomCategory[]);
+            setParentCategories(category.subcategories as CategoriesGetManyOutput);
             setSelectedCategories(category)
         } else {
             // This is a leaf category with no subcategory

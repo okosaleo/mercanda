@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import localFont from 'next/font/local'
 import "./globals.css";
+import { NuqsAdapter } from 'nuqs/adapters/next/app'
 import { TRPCReactProvider } from "@/trpc/client";
 import { Toaster } from "@/components/ui/sonner";
 
@@ -46,10 +47,12 @@ export default function RootLayout({
       <body
         className={`${Nohemi.className} antialiased`}
       >
+        <NuqsAdapter>
         <TRPCReactProvider>
         {children}
         <Toaster position="top-center" />
         </TRPCReactProvider>
+        </NuqsAdapter>
       </body>
     </html>
   );

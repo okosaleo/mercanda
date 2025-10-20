@@ -9,21 +9,21 @@ export default function ProductSort() {
     <div className='flex items-center gap-2 '>
         <Button 
         size="sm"
-        className={cn("text-sm", filters.sort !== "curated" && "bg-primary/30 hover:bg-transparent")}
+        className={cn("text-sm", filters.sort !== "curated" && "bg-white hover:bg-transparent")}
         onClick={() => setFilters({ sort: "curated"})}
         >
             Curated
         </Button>
         <Button 
         size="sm"
-        className={cn("text-sm ", filters.sort !== "trending" && "bg-primary/30 hover:bg-transparent")}
+        className={cn("text-sm ", filters.sort !== "trending" && "bg-white hover:bg-transparent")}
         onClick={() => setFilters({ sort: "trending"})}
         >
             Trending
         </Button>
         <Button 
         size="sm"
-        className={cn("text-sm", filters.sort !== "hot_and_new" && "bg-primary/30 hover:bg-transparent")}
+        className={cn("text-sm", filters.sort !== "hot_and_new" && "bg-white hover:bg-transparent")}
         onClick={() => setFilters({ sort: "hot_and_new"})}
         >
             Hot & New

@@ -1,17 +1,37 @@
-import { Category } from "@/payload-types";
+import { Category, Media, Tenant } from "@/payload-types";
 import { baseProcedure, createTRPCRouter} from "@/trpc/init"
 import type { Sort, Where } from "payload";
 import { z } from "zod";
 import { sortValues } from "../search-params";
+import { DEFAULT_LIMIT } from "@/constants";
 
 export const productsRouter = createTRPCRouter({
+    getOne:baseProcedure.input(
+        z.object({
+            id: z.string(),
+        })
+    ).query(async ({ctx, input}) => {
+        const product = await ctx.db.findByID({
+            collection: "products",
+            id: input.id,
+            depth: 2,
+        })
+        return {
+            ...product,
+            image: product?.image as Media | null,
+            tenant: product?.tenant as Tenant & { image: Media | null}
+        }
+    }),
     getMany: baseProcedure.input(
         z.object({
+            cursor: z.number().default(1),
+            limit: z.number().default(DEFAULT_LIMIT),
             category: z.string().nullable().optional(),
             minPrice: z.string().nullable().optional(),
             maxPrice: z.string().nullable().optional(),
             tags: z.array(z.string()).nullable().optional(),
             sort: z.enum(sortValues).nullable().optional(),
+            tenantSlug: z.string().nullable().optional(),
         })
     ).query(async ({ ctx, input }) => {
         const where: Where = {};
@@ -45,10 +65,16 @@ export const productsRouter = createTRPCRouter({
             }
         }
 
+        if(input.tenantSlug) {
+            where["tenant.slug"] = {
+                equals: input.tenantSlug
+            }
+        }
+
         if (input.category) {
             const categoriesData = await ctx.db.find({
                 collection: "categories",
-                limit: 1,
+                limit: 1,               
                 depth: 1,
                 pagination: false,
                 where: {
@@ -86,10 +112,19 @@ export const productsRouter = createTRPCRouter({
         }
         const data = await ctx.db.find({
               collection: "products",
-              depth: 1,
+              depth: 2,
               where,
               sort,
+              page: input.cursor,
+              limit: input.limit
             })
-            return data
+        return {
+            ...data,
+            docs: data.docs.map((doc) => ({
+                ...doc,
+                image: doc.image as Media | null,
+                tenant: doc.tenant as Tenant & { image: Media | null}
+            }))
+        }
     }),
 });

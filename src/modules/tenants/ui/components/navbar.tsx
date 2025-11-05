@@ -6,6 +6,19 @@ import { Skeleton } from "@/components/ui/skeleton"; // ✅ Import ShadCN Skelet
 import Link from 'next/link';
 import Image from 'next/image';
 import { generateTenantURL } from '@/lib/utils';
+import { Button } from '@/components/ui/button';
+import dynamic from 'next/dynamic';
+import { ShoppingCartIcon } from 'lucide-react';
+
+const CheckoutButton = dynamic(() => import("@/modules/checkout/ui/components/checkout-button").then((mod) => mod.CheckoutButton,
+   ),
+    { ssr: false,
+      loading: () => <Button disabled className="">
+        <ShoppingCartIcon />
+      </Button>,
+     },
+);
+
 
 interface Props {
   slug: string;
@@ -31,6 +44,7 @@ export default function NavBarTenants({ slug }: Props) {
         )}
             <p className='text-xl'>{data.name}</p>
         </Link>
+        <CheckoutButton hideIfEmpty tenantSlug={slug} />
       </div>
     </nav>
   );
@@ -43,6 +57,9 @@ export const NavBarTenantsSkeleton = () => {
       <div className='max-w-(--breakpoint-xl) mx-auto flex justify-between items-center h-full px-4 lg:px-12'>
         {/* Logo / Name skeleton */}
         <Skeleton className="h-6 w-32 rounded-md" />
+        <Button disabled className="">
+        <ShoppingCartIcon />
+      </Button>
       </div>
     </nav>
   );

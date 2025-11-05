@@ -14,7 +14,9 @@ import dynamic from "next/dynamic";
 
 const CartButton = dynamic(() => import("../components/cart-button").then((mod) => mod.CartButton,
    ),
-    { ssr: false }
+    { ssr: false,
+      loading: () => <Button disabled className="flex-1">Add to cart</Button>,
+     },
 );
 
 interface ProductViewProps {
@@ -106,6 +108,7 @@ export default function ProductView({productId, tenantSlug}: ProductViewProps) {
                         <div className="flex flex-col gap-4 p-6 border-b">
                             <div className="flex flex-row items-center gap-2">
                                 <CartButton 
+                                isPurchased={data.isPurchased}
                                 productId={productId}
                                 tenantSlug={tenantSlug}
                                  />
